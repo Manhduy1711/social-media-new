@@ -8,7 +8,7 @@ import { creatPost, updatePost } from "../../redux/actions/posts.js";
 const Form = ({ currentId, setCurrentId }) => {
   const classes = useStyles();
   const post = useSelector((state) =>
-    currentId ? state.posts.find((p) => p._id === currentId) : null
+    currentId ? state.posts.posts.find((p) => p._id === currentId) : null
   );
   const [postData, setPostData] = useState({
     title: "",
@@ -16,7 +16,6 @@ const Form = ({ currentId, setCurrentId }) => {
     tags: "",
     selectedFile: "",
   });
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -35,7 +34,6 @@ const Form = ({ currentId, setCurrentId }) => {
         })
       );
     }
-    clear();
   };
 
   const clear = () => {
@@ -43,10 +41,10 @@ const Form = ({ currentId, setCurrentId }) => {
     setPostData({
       title: "",
       message: "",
-      tags: "",
+      tags: [],
       selectedFile: "",
     });
-    console.log(clear);
+    clear();
   };
 
   if (!localStorage.getItem("profile")) {
@@ -96,7 +94,12 @@ const Form = ({ currentId, setCurrentId }) => {
             label="Tags"
             fullWidth
             value={postData.tags}
-            onChange={(e) => setPostData({ ...postData, tags: e.target.value })}
+            onChange={(e) =>
+              setPostData({
+                ...postData,
+                tags: e.target.value.split(",").map((tag) => tag.trim()),
+              })
+            }
           />
           <div className={classes.fileInput}>
             <FileBase

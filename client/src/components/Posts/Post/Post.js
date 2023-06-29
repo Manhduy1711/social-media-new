@@ -8,7 +8,6 @@ import {
   Button,
 } from "@mui/material";
 import {
-  ThumbDownAlt as ThumpUpAltIcon,
   Delete as DeleteIcon,
   MoreHoriz as MoreHorizIcon,
 } from "@mui/icons-material";
@@ -16,12 +15,13 @@ import moment from "moment";
 import useStyles from "./styles.js";
 import { useDispatch } from "react-redux";
 import { deletePost, likePost } from "../../../redux/actions/posts.js";
+import Likes from "./Likes.js";
 const Post = ({ post, setCurrentId }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("profile"))?.data;
   return (
-    <Card className={classes.card}>
+    <Card className={classes.card} raised elevation={6}>
       <CardMedia
         className={classes.media}
         image={post.selectedFile}
@@ -46,14 +46,17 @@ const Post = ({ post, setCurrentId }) => {
       </div>
       <div className={classes.details}>
         <Typography variant="body2" color="textSecondary">
-          {post.tags.map((tag) => `#${tag} `)}
+          {String(post.tags)
+            .split(",")
+            .map((tag) => `#${tag.trim()} `)
+            .join("")}
         </Typography>
       </div>
       <CardContent>
-        <Typography className={classes.title} variant="h5" gutterBottom>
+        <Typography variant="h5" gutterBottom>
           {post.title}
         </Typography>
-        <Typography className={classes.title} variant="h5" gutterBottom>
+        <Typography variant="p" color={"GrayText"} gutterBottom>
           {post.message}
         </Typography>
       </CardContent>
@@ -65,9 +68,7 @@ const Post = ({ post, setCurrentId }) => {
             dispatch(likePost(post._id));
           }}
         >
-          <ThumpUpAltIcon fontSize="small" />
-          Like
-          {post.likes.length}
+          <Likes post={post} user={user} />
         </Button>
         {post.creator !== user?._id ? (
           ""

@@ -1,24 +1,24 @@
 import { AppBar, Avatar, Button, Toolbar, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import memories from "../../images/memories.png";
+import { Link, redirect, useLocation } from "react-router-dom";
+import memoriesLogo from "../../images/memories-Logo.png";
+import memoriesText from "../../images/memories-Text.png";
 import decode from "jwt-decode";
 import useStyles from "./styles";
 import { useDispatch } from "react-redux";
 import { LOGOUT } from "../../constants/actionTypes";
+import { getPosts } from "../../redux/actions/posts";
 const Navbar = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const localtion = useLocation();
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("profile"))?.data
   );
 
-  console.log();
   const logout = () => {
     dispatch({ type: LOGOUT });
-    navigate("/");
+    redirect("/");
     setUser(null);
   };
   useEffect(() => {
@@ -33,19 +33,23 @@ const Navbar = () => {
     }
     setUser(JSON.parse(localStorage.getItem("profile"))?.data);
   }, [localtion]);
+
+  const redirectHome = () => {
+    dispatch(getPosts());
+    redirect("/");
+  };
+
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">
-      <div className={classes.brandContainer}>
-        <Typography
-          component={Link}
-          to="/"
-          className={classes.heading}
-          variant="h2"
-        >
-          Memories
-        </Typography>
-        <img src={memories} alt="memories" height={60} />
-      </div>
+      <Link onClick={redirectHome} to="/" className={classes.brandContainer}>
+        <img src={memoriesText} alt="icon" height={"45px"} />
+        <img
+          src={memoriesLogo}
+          className={classes.image}
+          alt="logo"
+          height={40}
+        />
+      </Link>
       <Toolbar className={classes.toolbar}>
         {user ? (
           <div className={classes.profile}>
